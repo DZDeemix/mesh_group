@@ -18,7 +18,7 @@
 Сначала склонируйте репозиторий с вашим проектом Laravel из Git:
 
 <pre>
-git clone <URL репозитория> my-laravel-project
+git clone git@github.com:DZDeemix/mesh_group.git my-laravel-project
 </pre>
 
 ## Шаг 2: Настройка окружения
