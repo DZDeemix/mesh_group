@@ -47,11 +47,19 @@ docker-compose up -d
 
 Войдите в контейнер приложения:
 <pre>
-docker-compose exec app bash
+docker exec -it my-laravel-project-php-cli-1 bash
 </pre>
 внутри контейнера выполните следующие команды для установки зависимостей Laravel:
 <pre>
 composer install
+</pre>
+выполните установку миграций Laravel:
+<pre>
+php artisan migrate
+</pre>
+поменяйте права на папку storage:
+<pre>
+chmod 777 -R storage/
 </pre>
 
 ## Шаг 5: Генерация ключа приложения Laravel
