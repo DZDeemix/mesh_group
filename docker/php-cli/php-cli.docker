@@ -1,0 +1,77 @@
+FROM php:8.1-cli
+
+ARG USER_ID
+ARG GROUP_ID
+
+# Install dependencies
+RUN apt-get update -y && apt-get upgrade -y
+RUN apt-get install -y \
+    cron \
+    make \
+    curl \
+    zip \
+    unzip \
+    libzip-dev \
+    librabbitmq-dev \
+    libfreetype6-dev \
+    libjpeg62-turbo-dev \
+    libpng-dev \
+    libicu-dev \
+    g++ \
+    gcc \
+    libpcre3-dev \
+    --no-install-recommends \
+    libmagickwand-dev \
+    libtool \
+    htop \
+    mc \
+    nano \
+    libxslt-dev \
+    libpq-dev
+
+RUN docker-php-ext-install \
+        pdo \
+        pgsql \
+        pdo_pgsql \
+        zip \
+        bcmath \
+        pdo_mysql \
+        mysqli \
+        intl \
+        xsl \
+        shmop \
+        sockets \
+        gettext \
+        pcntl \
+        sysvmsg \
+        sysvsem \
+        sysvshm
+
+
+RUN docker-php-ext-configure \
+    gd --with-freetype --with-jpeg \
+    && docker-php-ext-install \
+    gd
+
+RUN pecl install -o -f imagick\
+    &&  docker-php-ext-enable imagick
+
+RUN pecl install xdebug-3.1.4 \
+    &&  docker-php-ext-enable xdebug
+
+RUN pecl install redis \
+    && docker-php-ext-enable redis
+
+# Install composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+RUN yes | apt-get install supervisor
+
+COPY ./docker/php-cli/supervisor/conf.d/laravel-worker.conf /etc/supervisor/conf.d/laravel-worker.conf
+COPY ./docker/php-cli/supervisor/conf.d/laravel-websocket.conf /etc/supervisor/conf.d/laravel-websocket.conf
+
+CMD ["supervisord", "-c", "/etc/supervisor/conf.d/laravel-worker.conf"]
+
+WORKDIR /var/www/app
+
+USER "${USER_ID}:${GROUP_ID}"
