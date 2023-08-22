@@ -55,7 +55,6 @@ services:
 
   rabbitmq:
     image: rabbitmq:management
-    container_name: rabbitmq
     environment:
       - RABBITMQ_DEFAULT_USER=mash_group
       - RABBITMQ_DEFAULT_PASS=mash_group
